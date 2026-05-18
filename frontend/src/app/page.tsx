@@ -54,15 +54,17 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4"
           >
-            <Button size="lg" className="rounded-md" asChild>
-              <Link href="/register">
+            <Link href="/register" className="w-full sm:w-auto">
+              <Button size="lg" className="rounded-md w-full whitespace-nowrap">
                 Start Tracking Free
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" className="rounded-md" asChild>
-              <Link href="/dashboard">View Demo Dashboard</Link>
-            </Button>
+                <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
+              </Button>
+            </Link>
+            <Link href="/dashboard" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="rounded-md w-full whitespace-nowrap">
+                View Demo Dashboard
+              </Button>
+            </Link>
           </motion.div>
         </section>
 

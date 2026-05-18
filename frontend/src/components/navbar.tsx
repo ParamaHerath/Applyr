@@ -20,9 +20,11 @@ export function Navbar() {
             <Link href="/login" className="transition-colors hover:text-foreground/80 text-foreground/60">
               Log in
             </Link>
-            <Button asChild size="sm" className="rounded-md">
-              <Link href="/register">Get Started</Link>
-            </Button>
+            <Link href="/register">
+              <Button size="sm" className="rounded-md">
+                Get Started
+              </Button>
+            </Link>
           </nav>
           <Button
             variant="ghost"
