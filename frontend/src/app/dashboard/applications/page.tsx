@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, MoreHorizontal } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -97,6 +97,22 @@ export default function ApplicationsPage() {
       }
     } catch (err) {
       console.error("Failed to add application", err);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    const token = localStorage.getItem("token");
+    if (!confirm("Are you sure you want to delete this application?")) return;
+    try {
+      const res = await fetch(`http://localhost:8080/api/applications/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (res.ok) {
+        fetchApplications();
+      }
+    } catch (err) {
+      console.error("Failed to delete application", err);
     }
   };
 
@@ -214,8 +230,8 @@ export default function ApplicationsPage() {
                       <TableCell>{getStatusBadge(app.status)}</TableCell>
                       <TableCell className="text-muted-foreground">{app.appliedDate || "N/A"}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
+                        <Button variant="ghost" size="icon" onClick={() => handleDelete(app.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </TableCell>
                     </TableRow>
