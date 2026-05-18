@@ -38,7 +38,7 @@ export default function LoginPage() {
         const err = await res.text();
         setError(err || "Login failed");
       }
-    } catch (err) {
+    } catch {
       setError("Network error. Is the backend running?");
     } finally {
       setLoading(false);
@@ -104,7 +104,7 @@ export default function LoginPage() {
               </Button>
             </form>
             <div className="mt-6 text-center text-sm text-muted-foreground">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/register" className="font-medium text-primary hover:underline">
                 Sign up
               </Link>

@@ -68,7 +68,9 @@ export default function ApplicationsPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchApplications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAddApplication = async (e: React.FormEvent) => {

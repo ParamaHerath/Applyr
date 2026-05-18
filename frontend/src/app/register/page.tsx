@@ -38,7 +38,7 @@ export default function RegisterPage() {
         const err = await res.text();
         setError(err || "Registration failed");
       }
-    } catch (err) {
+    } catch {
       setError("Network error. Is the backend running?");
     } finally {
       setLoading(false);

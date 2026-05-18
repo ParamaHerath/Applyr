@@ -43,8 +43,9 @@ export default function DashboardHome() {
     const userStr = localStorage.getItem("user");
     if (userStr) {
       try {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUserName(JSON.parse(userStr).name);
-      } catch(e) {}
+      } catch {}
     }
 
     const fetchApplications = async () => {
@@ -62,7 +63,7 @@ export default function DashboardHome() {
       }
     };
     fetchApplications();
-  }, []);
+  }, [router]);
 
   const stats = {
     total: applications.length,
@@ -77,7 +78,7 @@ export default function DashboardHome() {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back, {userName || "User"}! Here's an overview of your job search.</p>
+        <p className="text-muted-foreground">Welcome back, {userName || "User"}! Here&apos;s an overview of your job search.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -118,7 +119,7 @@ export default function DashboardHome() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.rejected}</div>
-            <p className="text-xs text-muted-foreground">Don't give up.</p>
+            <p className="text-xs text-muted-foreground">Don&apos;t give up.</p>
           </CardContent>
         </Card>
       </div>
