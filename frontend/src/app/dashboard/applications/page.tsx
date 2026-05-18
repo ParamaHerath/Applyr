@@ -119,8 +119,8 @@ export default function ApplicationsPage() {
   };
 
   const filteredApps = applications.filter(app => 
-    app.companyName.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    app.role.toLowerCase().includes(searchQuery.toLowerCase())
+    (app.companyName || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (app.role || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -131,13 +131,12 @@ export default function ApplicationsPage() {
           <p className="text-muted-foreground">Manage and track your job applications.</p>
         </div>
         
+        <Button className="shrink-0 rounded-md" onClick={() => setIsDialogOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Application
+        </Button>
+
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="shrink-0 rounded-md">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Application
-            </Button>
-          </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Add New Application</DialogTitle>
