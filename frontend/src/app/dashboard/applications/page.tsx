@@ -1,19 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Plus, MoreHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const mockApplications = [
-  { id: 1, company: "Google", role: "Software Engineer", status: "INTERVIEWING", date: "2026-05-15" },
-  { id: 2, company: "Vercel", role: "Frontend Developer", status: "APPLIED", date: "2026-05-16" },
-  { id: 3, company: "Netflix", role: "Senior Backend Engineer", status: "REJECTED", date: "2026-05-10" },
-  { id: 4, company: "Stripe", role: "Full Stack Engineer", status: "OFFER", date: "2026-05-18" },
-];
+interface JobApplication {
+  id: number;
+  companyName: string;
+  role: string;
+  jobLink: string;
+  status: string;
+  appliedDate: string;
+}
 
 function getStatusBadge(status: string) {
   switch (status) {
@@ -31,7 +37,73 @@ function getStatusBadge(status: string) {
 }
 
 export default function ApplicationsPage() {
+  const router = useRouter();
+  const [applications, setApplications] = useState<JobApplication[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Form State
+  const [companyName, setCompanyName] = useState("");
+  const [role, setRole] = useState("");
+  const [status, setStatus] = useState("DRAFT");
+  const [appliedDate, setAppliedDate] = useState("");
+  const [jobLink, setJobLink] = useState("");
+
+  const fetchApplications = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return router.push("/login");
+
+    try {
+      const res = await fetch("http://localhost:8080/api/applications", {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setApplications(await res.json());
+      } else if (res.status === 401) {
+        router.push("/login");
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchApplications();
+  }, []);
+
+  const handleAddApplication = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+
+    const payload = { companyName, role, status, appliedDate: appliedDate || null, jobLink };
+
+    try {
+      const res = await fetch("http://localhost:8080/api/applications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        setIsDialogOpen(false);
+        setCompanyName("");
+        setRole("");
+        setStatus("DRAFT");
+        setAppliedDate("");
+        setJobLink("");
+        fetchApplications();
+      }
+    } catch (err) {
+      console.error("Failed to add application", err);
+    }
+  };
+
+  const filteredApps = applications.filter(app => 
+    app.companyName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    app.role.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col gap-8">
@@ -40,10 +112,62 @@ export default function ApplicationsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Applications</h1>
           <p className="text-muted-foreground">Manage and track your job applications.</p>
         </div>
-        <Button className="shrink-0 rounded-md">
-          <Plus className="mr-2 h-4 w-4" />
-          Add Application
-        </Button>
+        
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="shrink-0 rounded-md">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Application
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Add New Application</DialogTitle>
+              <DialogDescription>
+                Track a new job you applied to.
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleAddApplication} className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="companyName" className="text-right">Company</Label>
+                <Input id="companyName" value={companyName} onChange={e => setCompanyName(e.target.value)} className="col-span-3" required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="role" className="text-right">Role</Label>
+                <Input id="role" value={role} onChange={e => setRole(e.target.value)} className="col-span-3" required />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="status" className="text-right">Status</Label>
+                <div className="col-span-3">
+                  <Select value={status} onValueChange={setStatus}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="DRAFT">Draft</SelectItem>
+                      <SelectItem value="APPLIED">Applied</SelectItem>
+                      <SelectItem value="INTERVIEWING">Interviewing</SelectItem>
+                      <SelectItem value="OFFER">Offer</SelectItem>
+                      <SelectItem value="REJECTED">Rejected</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="date" className="text-right">Date</Label>
+                <Input id="date" type="date" value={appliedDate} onChange={e => setAppliedDate(e.target.value)} className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="link" className="text-right">Link</Label>
+                <Input id="link" type="url" placeholder="https://..." value={jobLink} onChange={e => setJobLink(e.target.value)} className="col-span-3" />
+              </div>
+              <div className="flex justify-end mt-4">
+                <Button type="submit">Save</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+
       </div>
 
       <Card className="rounded-xl border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
@@ -64,7 +188,7 @@ export default function ApplicationsPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border border-border/50 bg-background/50">
+          <div className="rounded-md border border-border/50 bg-background/50 overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50 hover:bg-muted/50">
@@ -76,19 +200,27 @@ export default function ApplicationsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockApplications.map((app) => (
-                  <TableRow key={app.id}>
-                    <TableCell className="font-medium">{app.company}</TableCell>
-                    <TableCell>{app.role}</TableCell>
-                    <TableCell>{getStatusBadge(app.status)}</TableCell>
-                    <TableCell className="text-muted-foreground">{app.date}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
+                {filteredApps.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                      No applications found.
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  filteredApps.map((app) => (
+                    <TableRow key={app.id}>
+                      <TableCell className="font-medium">{app.companyName}</TableCell>
+                      <TableCell>{app.role}</TableCell>
+                      <TableCell>{getStatusBadge(app.status)}</TableCell>
+                      <TableCell className="text-muted-foreground">{app.appliedDate || "N/A"}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
