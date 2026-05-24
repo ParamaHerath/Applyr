@@ -7,16 +7,19 @@ import { Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useAuth } from "@/context/auth-context";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { login } = useAuth();
 
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      router.push("/dashboard");
-    }
-  }, [router]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,8 +40,7 @@ export default function RegisterPage() {
 
       if (res.ok) {
         const data = await res.json();
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify({ name: data.name, email: data.email }));
+        login(data.token, { name: data.name, email: data.email });
         router.push("/dashboard");
       } else {
         const err = await res.text();
@@ -54,7 +56,7 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center relative overflow-hidden bg-background px-4">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
-      
+
       <div className="w-full max-w-md relative z-10">
         <div className="flex justify-center mb-8">
           <Link href="/" className="flex items-center gap-2">
@@ -65,7 +67,9 @@ export default function RegisterPage() {
 
         <Card className="rounded-xl border-border/50 bg-card/60 backdrop-blur-md shadow-2xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Create an account</CardTitle>
+            <CardTitle className="text-2xl text-center">
+              Create an account
+            </CardTitle>
             <CardDescription className="text-center">
               Enter your details to get started with Applyr
             </CardDescription>
@@ -112,13 +116,20 @@ export default function RegisterPage() {
                   className="bg-background/50"
                 />
               </div>
-              <Button type="submit" className="w-full rounded-md" disabled={loading}>
+              <Button
+                type="submit"
+                className="w-full rounded-md"
+                disabled={loading}
+              >
                 {loading ? "Creating account..." : "Create account"}
               </Button>
             </form>
             <div className="mt-6 text-center text-sm text-muted-foreground">
               Already have an account?{" "}
-              <Link href="/login" className="font-medium text-primary hover:underline">
+              <Link
+                href="/login"
+                className="font-medium text-primary hover:underline"
+              >
                 Sign in
               </Link>
             </div>

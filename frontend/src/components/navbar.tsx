@@ -22,7 +22,7 @@ export function Navbar() {
             </Link>
             <Link href="/register">
               <Button size="sm" className="rounded-md">
-                Get Started
+                Sign Up
               </Button>
             </Link>
           </nav>

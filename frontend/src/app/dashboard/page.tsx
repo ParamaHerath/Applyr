@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Briefcase, Send, CheckCircle, XCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/context/auth-context";
 
 interface JobApplication {
   id: number;
@@ -31,21 +32,22 @@ function getStatusBadge(status: string) {
   }
 }
 
+function getTokenFromCookie(): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 export default function DashboardHome() {
   const router = useRouter();
+  const { user } = useAuth();
   const [applications, setApplications] = useState<JobApplication[]>([]);
-  const [userName, setUserName] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return router.push("/login");
-
-    const userStr = localStorage.getItem("user");
-    if (userStr) {
-      try {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setUserName(JSON.parse(userStr).name);
-      } catch {}
+    const token = getTokenFromCookie();
+    if (!token) {
+      router.push("/login");
+      return;
     }
 
     const fetchApplications = async () => {
@@ -78,7 +80,7 @@ export default function DashboardHome() {
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">Welcome back, {userName || "User"}! Here&apos;s an overview of your job search.</p>
+        <p className="text-muted-foreground">Welcome back, {user?.name || "User"}! Here&apos;s an overview of your job search.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
