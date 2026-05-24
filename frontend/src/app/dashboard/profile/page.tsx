@@ -146,7 +146,7 @@ export default function ProfilePage() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex flex-col gap-8 max-w-2xl">
+    <div className="flex w-full flex-col gap-8">
       {/* Page header */}
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">Profile</h1>
@@ -156,7 +156,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Avatar + name hero */}
-      <div className="flex items-center gap-5 p-6 rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
+      <div className="flex w-full items-center gap-5 p-6 rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
         <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary text-2xl font-bold tracking-wide select-none ring-4 ring-primary/10">
           {name ? getInitials(name) : "?"}
         </div>
@@ -166,137 +166,139 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* ── Edit profile card ─────────────────────────────────────────────── */}
-      <Card className="rounded-xl border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
-        <CardHeader className="pb-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-              <UserRound className="h-4 w-4 text-primary" />
+      <div className="grid gap-8 lg:grid-cols-2">
+        {/* ── Edit profile card ───────────────────────────────────────────── */}
+        <Card className="rounded-xl border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                <UserRound className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-base">Personal Information</CardTitle>
+                <CardDescription className="text-xs">Update your display name.</CardDescription>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-base">Personal Information</CardTitle>
-              <CardDescription className="text-xs">Update your display name.</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSaveProfile} className="flex flex-col gap-5">
-            {profileAlert && <Alert state={profileAlert} />}
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSaveProfile} className="flex flex-col gap-5">
+              {profileAlert && <Alert state={profileAlert} />}
 
-            <div className="grid gap-2">
-              <Label htmlFor="profile-name">Full Name</Label>
-              <Input
-                id="profile-name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Jane Doe"
-                required
-                className="bg-background/50"
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="profile-name">Full Name</Label>
+                <Input
+                  id="profile-name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Jane Doe"
+                  required
+                  className="bg-background/50"
+                />
+              </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="profile-email">Email</Label>
-              <Input
-                id="profile-email"
-                type="email"
-                value={email}
-                disabled
-                className="bg-background/30 opacity-60 cursor-not-allowed"
-              />
-              <p className="text-xs text-muted-foreground">
-                Email address cannot be changed after registration.
-              </p>
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="profile-email">Email</Label>
+                <Input
+                  id="profile-email"
+                  type="email"
+                  value={email}
+                  disabled
+                  className="bg-background/30 opacity-60 cursor-not-allowed"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Email address cannot be changed after registration.
+                </p>
+              </div>
 
-            <div className="flex justify-end">
-              <Button type="submit" className="rounded-md" disabled={savingProfile}>
-                {savingProfile ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving…
-                  </>
-                ) : (
-                  "Save Changes"
-                )}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+              <div className="flex justify-end">
+                <Button type="submit" className="rounded-md" disabled={savingProfile}>
+                  {savingProfile ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving…
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
 
-      {/* ── Change password card ─────────────────────────────────────────── */}
-      <Card className="rounded-xl border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
-        <CardHeader className="pb-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-              <KeyRound className="h-4 w-4 text-primary" />
+        {/* ── Change password card ───────────────────────────────────────── */}
+        <Card className="rounded-xl border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                <KeyRound className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-base">Change Password</CardTitle>
+                <CardDescription className="text-xs">
+                  You must enter your current password to set a new one.
+                </CardDescription>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-base">Change Password</CardTitle>
-              <CardDescription className="text-xs">
-                You must enter your current password to set a new one.
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleChangePassword} className="flex flex-col gap-5">
-            {passwordAlert && <Alert state={passwordAlert} />}
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleChangePassword} className="flex flex-col gap-5">
+              {passwordAlert && <Alert state={passwordAlert} />}
 
-            <div className="grid gap-2">
-              <Label htmlFor="current-password">Current Password</Label>
-              <Input
-                id="current-password"
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                required
-                className="bg-background/50"
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="current-password">Current Password</Label>
+                <Input
+                  id="current-password"
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
+                  className="bg-background/50"
+                />
+              </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="new-password">New Password</Label>
-              <Input
-                id="new-password"
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="At least 8 characters"
-                required
-                className="bg-background/50"
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="new-password">New Password</Label>
+                <Input
+                  id="new-password"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="At least 8 characters"
+                  required
+                  className="bg-background/50"
+                />
+              </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="confirm-password">Confirm New Password</Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                className="bg-background/50"
-              />
-            </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirm-password">Confirm New Password</Label>
+                <Input
+                  id="confirm-password"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className="bg-background/50"
+                />
+              </div>
 
-            <div className="flex justify-end">
-              <Button type="submit" className="rounded-md" disabled={savingPassword}>
-                {savingPassword ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updating…
-                  </>
-                ) : (
-                  "Update Password"
-                )}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+              <div className="flex justify-end">
+                <Button type="submit" className="rounded-md" disabled={savingPassword}>
+                  {savingPassword ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Updating…
+                    </>
+                  ) : (
+                    "Update Password"
+                  )}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
