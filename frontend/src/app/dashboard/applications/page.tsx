@@ -36,6 +36,12 @@ function getStatusBadge(status: string) {
   }
 }
 
+function getTokenFromCookie(): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 export default function ApplicationsPage() {
   const router = useRouter();
   const [applications, setApplications] = useState<JobApplication[]>([]);
@@ -50,7 +56,7 @@ export default function ApplicationsPage() {
   const [jobLink, setJobLink] = useState("");
 
   const fetchApplications = async () => {
-    const token = localStorage.getItem("token");
+    const token = getTokenFromCookie();
     if (!token) return router.push("/login");
 
     try {
@@ -75,7 +81,7 @@ export default function ApplicationsPage() {
 
   const handleAddApplication = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem("token");
+    const token = getTokenFromCookie();
 
     const payload = { companyName, role, status, appliedDate: appliedDate || null, jobLink };
 
@@ -103,7 +109,7 @@ export default function ApplicationsPage() {
   };
 
   const handleDelete = async (id: number) => {
-    const token = localStorage.getItem("token");
+    const token = getTokenFromCookie();
     if (!confirm("Are you sure you want to delete this application?")) return;
     try {
       const res = await fetch(`http://localhost:8080/api/applications/${id}`, {

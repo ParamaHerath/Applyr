@@ -6,18 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, BarChart2, Briefcase, Sparkles } from "lucide-react";
 import Link from "next/link";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      router.push("/dashboard");
-    }
-  }, [router]);
-
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
