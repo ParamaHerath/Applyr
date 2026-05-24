@@ -16,7 +16,7 @@ import { useAuth } from "@/context/auth-context";
 const sidebarLinks = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Applications", href: "/dashboard/applications", icon: ListTodo },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 /** Returns up to 2 initials from a display name, e.g. "Jane Doe" → "JD" */
