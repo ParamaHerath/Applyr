@@ -4,10 +4,10 @@ import com.applyr.api.entity.JobApplication;
 import com.applyr.api.entity.User;
 import com.applyr.api.repository.UserRepository;
 import com.applyr.api.service.JobApplicationService;
-import com.applyr.api.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,28 +23,26 @@ public class JobApplicationController {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    private Optional<User> getUserFromToken(String authHeader) {
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            String email = jwtUtil.extractEmail(token);
-            return userRepository.findByEmail(email);
-        }
-        return Optional.empty();
+    /**
+     * Resolves the currently authenticated user from the SecurityContext.
+     * The JwtAuthenticationFilter has already validated the token by this point —
+     * the Authentication principal is the user's email.
+     */
+    private Optional<User> getCurrentUser(Authentication auth) {
+        if (auth == null || !auth.isAuthenticated()) return Optional.empty();
+        return userRepository.findByEmail(auth.getName());
     }
 
     @GetMapping
-    public ResponseEntity<List<JobApplication>> getAllApplications(@RequestHeader("Authorization") String authHeader) {
-        return getUserFromToken(authHeader)
+    public ResponseEntity<List<JobApplication>> getAllApplications(Authentication auth) {
+        return getCurrentUser(auth)
                 .map(user -> ResponseEntity.ok(service.findByUserId(user.getId())))
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<JobApplication> getApplicationById(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
-        Optional<User> userOpt = getUserFromToken(authHeader);
+    public ResponseEntity<JobApplication> getApplicationById(@PathVariable Long id, Authentication auth) {
+        Optional<User> userOpt = getCurrentUser(auth);
         if (userOpt.isEmpty()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         return service.findById(id)
@@ -54,8 +52,10 @@ public class JobApplicationController {
     }
 
     @PostMapping
-    public ResponseEntity<JobApplication> createApplication(@RequestBody JobApplication jobApplication, @RequestHeader("Authorization") String authHeader) {
-        return getUserFromToken(authHeader)
+    public ResponseEntity<JobApplication> createApplication(
+            @RequestBody JobApplication jobApplication,
+            Authentication auth) {
+        return getCurrentUser(auth)
                 .map(user -> {
                     jobApplication.setUser(user);
                     return ResponseEntity.ok(service.save(jobApplication));
@@ -64,8 +64,11 @@ public class JobApplicationController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<JobApplication> updateApplication(@PathVariable Long id, @RequestBody JobApplication applicationDetails, @RequestHeader("Authorization") String authHeader) {
-        Optional<User> userOpt = getUserFromToken(authHeader);
+    public ResponseEntity<JobApplication> updateApplication(
+            @PathVariable Long id,
+            @RequestBody JobApplication applicationDetails,
+            Authentication auth) {
+        Optional<User> userOpt = getCurrentUser(auth);
         if (userOpt.isEmpty()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         return service.findById(id)
@@ -82,8 +85,8 @@ public class JobApplicationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteApplication(@PathVariable Long id, @RequestHeader("Authorization") String authHeader) {
-        Optional<User> userOpt = getUserFromToken(authHeader);
+    public ResponseEntity<Void> deleteApplication(@PathVariable Long id, Authentication auth) {
+        Optional<User> userOpt = getCurrentUser(auth);
         if (userOpt.isEmpty()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         Optional<JobApplication> appOpt = service.findById(id);
