@@ -331,40 +331,53 @@ export default function ApplicationDetailPage() {
         {/* Left column — 2 / 3 */}
         <div className="lg:col-span-2 flex flex-col gap-6">
 
-          {/* ── Job Details card ──────────────────────────────────────── */}
-          <Card className="rounded-xl border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
+          {/* ── Quick Info card (Left column) ──────────────────────────── */}
+          <Card className="rounded-xl border-border/50 bg-card/50 backdrop-blur-sm shadow-sm relative overflow-hidden">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-base font-semibold">
                 <Briefcase className="h-4 w-4 text-muted-foreground" />
-                Job Details
+                Quick Info
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
+              <dl className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-6">
                 <div className="flex flex-col gap-1">
-                  <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Company
+                  <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <Lock className="h-3 w-3 opacity-50" /> Tech Stacks
                   </dt>
-                  <dd className="text-sm font-medium">{app.companyName}</dd>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Role
-                  </dt>
-                  <dd className="text-sm font-medium">{app.role}</dd>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Date Applied
-                  </dt>
-                  <dd className="text-sm font-medium">
-                    {formatDate(app.appliedDate)}
+                  <dd className="text-sm">
+                    <div className="mt-1.5 h-2 w-20 rounded-full bg-muted/60 animate-pulse" />
                   </dd>
                 </div>
 
                 <div className="flex flex-col gap-1">
+                  <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <Lock className="h-3 w-3 opacity-50" /> Salary Range
+                  </dt>
+                  <dd className="text-sm">
+                    <div className="mt-1.5 h-2 w-16 rounded-full bg-muted/60 animate-pulse" />
+                  </dd>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <Lock className="h-3 w-3 opacity-50" /> Location
+                  </dt>
+                  <dd className="text-sm">
+                    <div className="mt-1.5 h-2 w-24 rounded-full bg-muted/60 animate-pulse" />
+                  </dd>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <Lock className="h-3 w-3 opacity-50" /> Work Type
+                  </dt>
+                  <dd className="text-sm">
+                    <div className="mt-1.5 h-2 w-16 rounded-full bg-muted/60 animate-pulse" />
+                  </dd>
+                </div>
+
+                <div className="flex flex-col gap-1 sm:col-span-2">
                   <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Job Link
                   </dt>
@@ -392,9 +405,8 @@ export default function ApplicationDetailPage() {
             </CardContent>
           </Card>
 
-          {/* ── Auto-Parse placeholder card ───────────────────────────── */}
+          {/* ── Job Description card ──────────────────────────────────── */}
           <Card className="rounded-xl border-dashed border-border/60 bg-muted/10 shadow-sm relative overflow-hidden">
-            {/* Subtle radial glow — purely decorative */}
             <div className="pointer-events-none absolute inset-0 opacity-[0.04] bg-[radial-gradient(ellipse_at_50%_0%,_var(--primary),_transparent_65%)]" />
 
             <CardHeader className="pb-4">
@@ -402,11 +414,10 @@ export default function ApplicationDetailPage() {
                 <div>
                   <CardTitle className="flex items-center gap-2 text-base font-semibold">
                     <Wand2 className="h-4 w-4 text-muted-foreground" />
-                    Auto-Parsed Details
+                    Job Description
                   </CardTitle>
                   <CardDescription className="mt-1 text-xs">
-                    Paste a job URL and click &ldquo;Parse&rdquo; — these fields
-                    fill automatically.
+                    The full job description automatically parsed from the job link.
                   </CardDescription>
                 </div>
                 <Badge
@@ -419,26 +430,12 @@ export default function ApplicationDetailPage() {
             </CardHeader>
 
             <CardContent>
-              <div className="flex flex-col gap-2.5">
-                {[
-                  "Job Description",
-                  "Required Skills / Tech Stack",
-                  "Salary Range",
-                  "Location",
-                  "Work Type  (Remote · Hybrid · On-site)",
-                ].map((field) => (
-                  <div
-                    key={field}
-                    className="flex items-center gap-3 rounded-lg border border-border/40 bg-background/50 px-4 py-3 select-none"
-                  >
-                    <Lock className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
-                    <span className="text-sm text-muted-foreground/60">
-                      {field}
-                    </span>
-                    {/* Placeholder shimmer bar */}
-                    <div className="ml-auto h-2 w-20 rounded-full bg-muted/50" />
-                  </div>
-                ))}
+              <div className="flex flex-col gap-3 pb-2">
+                <div className="h-3 w-full rounded-full bg-muted/60 animate-pulse" />
+                <div className="h-3 w-11/12 rounded-full bg-muted/60 animate-pulse" />
+                <div className="h-3 w-4/5 rounded-full bg-muted/60 animate-pulse" />
+                <div className="h-3 w-full rounded-full bg-muted/60 animate-pulse" />
+                <div className="h-3 w-3/4 rounded-full bg-muted/60 animate-pulse" />
               </div>
             </CardContent>
           </Card>
@@ -514,11 +511,11 @@ export default function ApplicationDetailPage() {
         {/* Right column — 1 / 3 */}
         <div className="flex flex-col gap-6">
 
-          {/* ── Quick Info card ───────────────────────────────────────── */}
+          {/* ── Tracking Details card ─────────────────────────────────── */}
           <Card className="rounded-xl border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold">
-                Quick Info
+                Tracking Details
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-0">
