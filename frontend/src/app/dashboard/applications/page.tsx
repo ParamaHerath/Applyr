@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 interface JobApplication {
   id: number;
+  publicId: string;
   companyName: string;
   role: string;
   jobLink: string;
@@ -231,15 +232,26 @@ export default function ApplicationsPage() {
                   </TableRow>
                 ) : (
                   filteredApps.map((app) => (
-                    <TableRow key={app.id}>
+                    <TableRow
+                      key={app.id}
+                      className="cursor-pointer"
+                      onClick={() => router.push(`/dashboard/applications/${app.publicId}`)}
+                    >
                       <TableCell className="font-medium">{app.companyName}</TableCell>
                       <TableCell>{app.role}</TableCell>
                       <TableCell>{getStatusBadge(app.status)}</TableCell>
                       <TableCell className="text-muted-foreground">{app.appliedDate || "N/A"}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(app.id)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => { e.stopPropagation(); handleDelete(app.id); }}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground/40 shrink-0" />
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
