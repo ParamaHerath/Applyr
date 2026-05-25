@@ -13,6 +13,8 @@ import {
   Link2,
   Clock,
   Lock,
+  CodeXml,
+  MapPin,
   Wand2,
   CheckCircle2,
   Search,
@@ -21,6 +23,7 @@ import {
   Save,
   X,
   Loader2,
+  CircleDollarSign,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -318,11 +321,6 @@ export default function ApplicationDetailPage() {
           <Building2 className="h-4 w-4 shrink-0" />
           {app.companyName}
         </p>
-        {app.appliedDate && (
-          <p className="text-sm text-muted-foreground">
-            Applied on {formatDate(app.appliedDate)}
-          </p>
-        )}
       </div>
 
       {/* ── Content grid ────────────────────────────────────────────────── */}
@@ -343,7 +341,7 @@ export default function ApplicationDetailPage() {
               <dl className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-6">
                 <div className="flex flex-col gap-1">
                   <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    <Lock className="h-3 w-3 opacity-50" /> Tech Stacks
+                    <CodeXml className="h-3 w-3" /> Tech Stacks
                   </dt>
                   <dd className="text-sm">
                     <div className="mt-1.5 h-2 w-20 rounded-full bg-muted/60 animate-pulse" />
@@ -352,7 +350,7 @@ export default function ApplicationDetailPage() {
 
                 <div className="flex flex-col gap-1">
                   <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    <Lock className="h-3 w-3 opacity-50" /> Salary Range
+                    <CircleDollarSign className="h-3 w-3" /> Salary Range
                   </dt>
                   <dd className="text-sm">
                     <div className="mt-1.5 h-2 w-16 rounded-full bg-muted/60 animate-pulse" />
@@ -361,7 +359,7 @@ export default function ApplicationDetailPage() {
 
                 <div className="flex flex-col gap-1">
                   <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    <Lock className="h-3 w-3 opacity-50" /> Location
+                    <MapPin className="h-3 w-3" /> Location
                   </dt>
                   <dd className="text-sm">
                     <div className="mt-1.5 h-2 w-24 rounded-full bg-muted/60 animate-pulse" />
@@ -370,7 +368,7 @@ export default function ApplicationDetailPage() {
 
                 <div className="flex flex-col gap-1">
                   <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    <Lock className="h-3 w-3 opacity-50" /> Work Type
+                    <Lock className="h-3 w-3" /> Work Type
                   </dt>
                   <dd className="text-sm">
                     <div className="mt-1.5 h-2 w-16 rounded-full bg-muted/60 animate-pulse" />
@@ -378,8 +376,8 @@ export default function ApplicationDetailPage() {
                 </div>
 
                 <div className="flex flex-col gap-1 sm:col-span-2">
-                  <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Job Link
+                  <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <Link2 className="h-3 w-3" /> Job Link
                   </dt>
                   <dd className="text-sm">
                     {app.jobLink ? (
@@ -390,9 +388,8 @@ export default function ApplicationDetailPage() {
                         className="inline-flex items-center gap-1.5 text-primary hover:underline break-all"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <Link2 className="h-3.5 w-3.5 shrink-0" />
                         {app.jobLink}
-                        <ExternalLink className="h-3 w-3 shrink-0 opacity-50" />
+                        <ExternalLink className="h-3 w-3 shrink-0" />
                       </a>
                     ) : (
                       <span className="italic text-muted-foreground">
@@ -511,11 +508,11 @@ export default function ApplicationDetailPage() {
         {/* Right column — 1 / 3 */}
         <div className="flex flex-col gap-6">
 
-          {/* ── Tracking Details card ─────────────────────────────────── */}
+          {/* ── Timeline card ─────────────────────────────────── */}
           <Card className="rounded-xl border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold">
-                Tracking Details
+                Timeline
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-0">
@@ -533,6 +530,20 @@ export default function ApplicationDetailPage() {
               </div>
               <div className="border-t border-border/40" />
 
+              {/* Added to tracker */}
+              <div className="flex items-center gap-3 py-3">
+                <Clock className="h-4 w-4 shrink-0 text-muted-foreground/50" />
+                <div className="flex flex-col">
+                  <span className="text-[11px] text-muted-foreground">
+                    Date Added
+                  </span>
+                  <span className="text-sm font-medium">
+                    {formatDate(app.createdAt)}
+                  </span>
+                </div>
+              </div>
+              <div className="border-t border-border/40" />
+
               {/* Date Applied */}
               <div className="flex items-center gap-3 py-3">
                 <Calendar className="h-4 w-4 shrink-0 text-muted-foreground/50" />
@@ -541,21 +552,7 @@ export default function ApplicationDetailPage() {
                     Date Applied
                   </span>
                   <span className="text-sm font-medium">
-                    {formatDate(app.appliedDate)}
-                  </span>
-                </div>
-              </div>
-              <div className="border-t border-border/40" />
-
-              {/* Added to tracker */}
-              <div className="flex items-center gap-3 py-3">
-                <Clock className="h-4 w-4 shrink-0 text-muted-foreground/50" />
-                <div className="flex flex-col">
-                  <span className="text-[11px] text-muted-foreground">
-                    Added to tracker
-                  </span>
-                  <span className="text-sm font-medium">
-                    {formatDate(app.createdAt)}
+                    {app.status === "DRAFT" ? "—" : formatDate(app.appliedDate)}
                   </span>
                 </div>
               </div>

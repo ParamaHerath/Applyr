@@ -2,6 +2,7 @@ package com.applyr.api.controller;
 
 import com.applyr.api.entity.JobApplication;
 import com.applyr.api.entity.User;
+import com.applyr.api.entity.ApplicationStatus;
 import com.applyr.api.repository.UserRepository;
 import com.applyr.api.service.JobApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,9 @@ public class JobApplicationController {
         return getCurrentUser(auth)
                 .map(user -> {
                     jobApplication.setUser(user);
+                    if (jobApplication.getStatus() == ApplicationStatus.DRAFT) {
+                        jobApplication.setAppliedDate(null);
+                    }
                     return ResponseEntity.ok(service.save(jobApplication));
                 })
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
@@ -80,7 +84,11 @@ public class JobApplicationController {
                     application.setRole(applicationDetails.getRole());
                     application.setJobLink(applicationDetails.getJobLink());
                     application.setStatus(applicationDetails.getStatus());
-                    application.setAppliedDate(applicationDetails.getAppliedDate());
+                    if (applicationDetails.getStatus() == ApplicationStatus.DRAFT) {
+                        application.setAppliedDate(null);
+                    } else {
+                        application.setAppliedDate(applicationDetails.getAppliedDate());
+                    }
                     application.setNotes(applicationDetails.getNotes());
                     return ResponseEntity.ok(service.save(application));
                 }).orElse(ResponseEntity.notFound().build());

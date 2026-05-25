@@ -69,7 +69,13 @@ export default function ApplicationsPage() {
     e.preventDefault();
     const token = getTokenFromCookie();
 
-    const payload = { companyName, role, status, appliedDate: appliedDate || null, jobLink };
+    const payload = { 
+      companyName, 
+      role, 
+      status, 
+      appliedDate: status === "DRAFT" ? null : (appliedDate || null), 
+      jobLink 
+    };
 
     try {
       const res = await fetch("http://localhost:8080/api/applications", {
@@ -148,7 +154,13 @@ export default function ApplicationsPage() {
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="status" className="text-right">Status</Label>
                 <div className="col-span-3">
-                  <Select value={status} onValueChange={(v) => setStatus(v ?? "DRAFT")}>
+                  <Select value={status} onValueChange={(v) => {
+                    const newStatus = v ?? "DRAFT";
+                    setStatus(newStatus);
+                    if (newStatus === "DRAFT") {
+                      setAppliedDate("");
+                    }
+                  }}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
@@ -163,8 +175,15 @@ export default function ApplicationsPage() {
                 </div>
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="date" className="text-right">Date</Label>
-                <Input id="date" type="date" value={appliedDate} onChange={e => setAppliedDate(e.target.value)} className="col-span-3" />
+                <Label htmlFor="date" className={`text-right ${status === "DRAFT" ? "opacity-50" : ""}`}>Date</Label>
+                <Input 
+                  id="date" 
+                  type="date" 
+                  value={status === "DRAFT" ? "" : appliedDate} 
+                  onChange={e => setAppliedDate(e.target.value)} 
+                  disabled={status === "DRAFT"}
+                  className="col-span-3" 
+                />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="link" className="text-right">Link</Label>
