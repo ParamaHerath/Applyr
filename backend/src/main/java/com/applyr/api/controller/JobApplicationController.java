@@ -2,6 +2,7 @@ package com.applyr.api.controller;
 
 import com.applyr.api.entity.JobApplication;
 import com.applyr.api.entity.User;
+import com.applyr.api.entity.ApplicationStatus;
 import com.applyr.api.repository.UserRepository;
 import com.applyr.api.service.JobApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +41,14 @@ public class JobApplicationController {
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<JobApplication> getApplicationById(@PathVariable Long id, Authentication auth) {
+    /** Look up a single application by its public slug (e.g. "aB3k9xQwZ1p"). */
+    @GetMapping("/{publicId}")
+    public ResponseEntity<JobApplication> getApplicationByPublicId(
+            @PathVariable String publicId, Authentication auth) {
         Optional<User> userOpt = getCurrentUser(auth);
         if (userOpt.isEmpty()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        return service.findById(id)
+        return service.findByPublicId(publicId)
                 .filter(app -> app.getUser().getId().equals(userOpt.get().getId()))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -58,40 +61,48 @@ public class JobApplicationController {
         return getCurrentUser(auth)
                 .map(user -> {
                     jobApplication.setUser(user);
+                    if (jobApplication.getStatus() == ApplicationStatus.DRAFT) {
+                        jobApplication.setAppliedDate(null);
+                    }
                     return ResponseEntity.ok(service.save(jobApplication));
                 })
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{publicId}")
     public ResponseEntity<JobApplication> updateApplication(
-            @PathVariable Long id,
+            @PathVariable String publicId,
             @RequestBody JobApplication applicationDetails,
             Authentication auth) {
         Optional<User> userOpt = getCurrentUser(auth);
         if (userOpt.isEmpty()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        return service.findById(id)
+        return service.findByPublicId(publicId)
                 .filter(app -> app.getUser().getId().equals(userOpt.get().getId()))
                 .map(application -> {
                     application.setCompanyName(applicationDetails.getCompanyName());
                     application.setRole(applicationDetails.getRole());
                     application.setJobLink(applicationDetails.getJobLink());
                     application.setStatus(applicationDetails.getStatus());
-                    application.setAppliedDate(applicationDetails.getAppliedDate());
+                    if (applicationDetails.getStatus() == ApplicationStatus.DRAFT) {
+                        application.setAppliedDate(null);
+                    } else {
+                        application.setAppliedDate(applicationDetails.getAppliedDate());
+                    }
                     application.setNotes(applicationDetails.getNotes());
                     return ResponseEntity.ok(service.save(application));
                 }).orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteApplication(@PathVariable Long id, Authentication auth) {
+    @DeleteMapping("/{publicId}")
+    public ResponseEntity<Void> deleteApplication(
+            @PathVariable String publicId, Authentication auth) {
         Optional<User> userOpt = getCurrentUser(auth);
         if (userOpt.isEmpty()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Optional<JobApplication> appOpt = service.findById(id);
+        Optional<JobApplication> appOpt = service.findByPublicId(publicId);
         if (appOpt.isPresent() && appOpt.get().getUser().getId().equals(userOpt.get().getId())) {
-            service.deleteById(id);
+            service.deleteById(appOpt.get().getId());
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();

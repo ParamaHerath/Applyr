@@ -1,6 +1,7 @@
 package com.applyr.api.entity;
 
 import jakarta.persistence.*;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,6 +27,9 @@ public class JobApplication {
 
     private String jobLink;
 
+    @Column(name = "public_id", unique = true, length = 11)
+    private String publicId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ApplicationStatus status = ApplicationStatus.DRAFT;
@@ -40,8 +44,32 @@ public class JobApplication {
 
     private LocalDateTime updatedAt = LocalDateTime.now();
 
+    @PrePersist
+    public void prePersist() {
+        if (this.publicId == null) {
+            this.publicId = generatePublicId();
+        }
+    }
+
     @PreUpdate
-    public void setLastUpdate() {  this.updatedAt = LocalDateTime.now(); }
+    public void setLastUpdate() { this.updatedAt = LocalDateTime.now(); }
+
+    /** Called by the service layer to heal existing rows that pre-date this column. */
+    public void ensurePublicId() {
+        if (this.publicId == null) {
+            this.publicId = generatePublicId();
+        }
+    }
+
+    public static String generatePublicId() {
+        final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        final SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(11);
+        for (int i = 0; i < 11; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
+    }
 
     public JobApplication() {}
 
@@ -59,6 +87,9 @@ public class JobApplication {
 
     public String getJobLink() { return jobLink; }
     public void setJobLink(String jobLink) { this.jobLink = jobLink; }
+
+    public String getPublicId() { return publicId; }
+    public void setPublicId(String publicId) { this.publicId = publicId; }
 
     public ApplicationStatus getStatus() { return status; }
     public void setStatus(ApplicationStatus status) { this.status = status; }
