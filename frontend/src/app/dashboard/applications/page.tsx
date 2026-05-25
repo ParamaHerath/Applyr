@@ -7,10 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Trash2, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { StatusBadge } from "@/components/status-badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ApplicationModal } from "@/components/application-modal";
 
 interface JobApplication {
   id: number;
@@ -32,14 +30,7 @@ export default function ApplicationsPage() {
   const router = useRouter();
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  // Form State
-  const [companyName, setCompanyName] = useState("");
-  const [role, setRole] = useState("");
-  const [status, setStatus] = useState("DRAFT");
-  const [appliedDate, setAppliedDate] = useState("");
-  const [jobLink, setJobLink] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchApplications = async () => {
     const token = getTokenFromCookie();
@@ -47,7 +38,7 @@ export default function ApplicationsPage() {
 
     try {
       const res = await fetch("http://localhost:8080/api/applications", {
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         setApplications(await res.json());
@@ -60,45 +51,10 @@ export default function ApplicationsPage() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchApplications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleAddApplication = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const token = getTokenFromCookie();
-
-    const payload = { 
-      companyName, 
-      role, 
-      status, 
-      appliedDate: status === "DRAFT" ? null : (appliedDate || null), 
-      jobLink 
-    };
-
-    try {
-      const res = await fetch("http://localhost:8080/api/applications", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
-      if (res.ok) {
-        setIsDialogOpen(false);
-        setCompanyName("");
-        setRole("");
-        setStatus("DRAFT");
-        setAppliedDate("");
-        setJobLink("");
-        fetchApplications();
-      }
-    } catch (err) {
-      console.error("Failed to add application", err);
-    }
-  };
 
   const handleDelete = async (id: number) => {
     const token = getTokenFromCookie();
@@ -106,7 +62,7 @@ export default function ApplicationsPage() {
     try {
       const res = await fetch(`http://localhost:8080/api/applications/${id}`, {
         method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         fetchApplications();
@@ -116,9 +72,10 @@ export default function ApplicationsPage() {
     }
   };
 
-  const filteredApps = applications.filter(app => 
-    (app.companyName || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
-    (app.role || "").toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredApps = applications.filter(
+    (app) =>
+      (app.companyName || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (app.role || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -128,75 +85,19 @@ export default function ApplicationsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Applications</h1>
           <p className="text-muted-foreground">Manage and track your job applications.</p>
         </div>
-        
-        <Button className="shrink-0 rounded-md" onClick={() => setIsDialogOpen(true)}>
+
+        <Button className="shrink-0 rounded-md" onClick={() => setIsModalOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
           Add Application
         </Button>
-
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add New Application</DialogTitle>
-              <DialogDescription>
-                Track a new job you applied to.
-              </DialogDescription>
-            </DialogHeader>
-            <form onSubmit={handleAddApplication} className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="companyName" className="text-right">Company</Label>
-                <Input id="companyName" value={companyName} onChange={e => setCompanyName(e.target.value)} className="col-span-3" required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="role" className="text-right">Role</Label>
-                <Input id="role" value={role} onChange={e => setRole(e.target.value)} className="col-span-3" required />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="status" className="text-right">Status</Label>
-                <div className="col-span-3">
-                  <Select value={status} onValueChange={(v) => {
-                    const newStatus = v ?? "DRAFT";
-                    setStatus(newStatus);
-                    if (newStatus === "DRAFT") {
-                      setAppliedDate("");
-                    }
-                  }}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="DRAFT">Draft</SelectItem>
-                      <SelectItem value="APPLIED">Applied</SelectItem>
-                      <SelectItem value="INTERVIEWING">Interviewing</SelectItem>
-                      <SelectItem value="OFFER">Offer</SelectItem>
-                      <SelectItem value="REJECTED">Rejected</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="date" className={`text-right ${status === "DRAFT" ? "opacity-50" : ""}`}>Date</Label>
-                <Input 
-                  id="date" 
-                  type="date" 
-                  value={status === "DRAFT" ? "" : appliedDate} 
-                  onChange={e => setAppliedDate(e.target.value)} 
-                  disabled={status === "DRAFT"}
-                  className="col-span-3" 
-                />
-              </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="link" className="text-right">Link</Label>
-                <Input id="link" type="url" placeholder="https://..." value={jobLink} onChange={e => setJobLink(e.target.value)} className="col-span-3" />
-              </div>
-              <div className="flex justify-end mt-4">
-                <Button type="submit">Save</Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-
       </div>
+
+      {/* ── Add Application Modal ─────────────────────────────────────────── */}
+      <ApplicationModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onSaved={() => fetchApplications()}
+      />
 
       <Card className="rounded-xl border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
         <CardHeader>
@@ -206,8 +107,8 @@ export default function ApplicationsPage() {
               <CardDescription>A list of all your recent job applications.</CardDescription>
             </div>
             <div className="w-full sm:w-64">
-              <Input 
-                placeholder="Search companies..." 
+              <Input
+                placeholder="Search companies..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="bg-background"
@@ -243,14 +144,21 @@ export default function ApplicationsPage() {
                     >
                       <TableCell className="font-medium">{app.companyName}</TableCell>
                       <TableCell>{app.role}</TableCell>
-                      <TableCell><StatusBadge status={app.status} /></TableCell>
-                      <TableCell className="text-muted-foreground">{app.appliedDate || "N/A"}</TableCell>
+                      <TableCell>
+                        <StatusBadge status={app.status} />
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {app.appliedDate || "—"}
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={(e) => { e.stopPropagation(); handleDelete(app.id); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(app.id);
+                            }}
                           >
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>

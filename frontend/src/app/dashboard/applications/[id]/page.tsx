@@ -24,11 +24,13 @@ import {
   X,
   Loader2,
   CircleDollarSign,
+  Pencil,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/status-badge";
+import { ApplicationModal } from "@/components/application-modal";
 import {
   Card,
   CardContent,
@@ -172,6 +174,7 @@ export default function ApplicationDetailPage() {
   const [isEditingNotes, setIsEditingNotes] = useState(false);
   const [notesDraft, setNotesDraft] = useState("");
   const [isSavingNotes, setIsSavingNotes] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     const token = getTokenFromCookie();
@@ -311,11 +314,38 @@ export default function ApplicationDetailPage() {
         </div>
       </div>
 
+      {/* ── Edit modal ───────────────────────────────────────────────────── */}
+      <ApplicationModal
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        initialData={{
+          publicId: app.publicId,
+          companyName: app.companyName,
+          role: app.role,
+          status: app.status,
+          appliedDate: app.appliedDate,
+          jobLink: app.jobLink,
+          notes: app.notes,
+        }}
+        onSaved={(updated) => setApp(updated)}
+      />
+
       {/* ── Hero ────────────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-1.5">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-bold tracking-tight">{app.role}</h1>
-          <StatusBadge status={app.status} className="h-7 px-3 py-1 flex items-center text-sm" />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-3xl font-bold tracking-tight">{app.role}</h1>
+            <StatusBadge status={app.status} className="h-7 px-3 py-1 flex items-center text-sm" />
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2 shrink-0"
+            onClick={() => setIsEditModalOpen(true)}
+          >
+            <Pencil className="h-3.5 w-3.5" />
+            Edit
+          </Button>
         </div>
         <p className="flex items-center gap-2 text-lg text-muted-foreground">
           <Building2 className="h-4 w-4 shrink-0" />
