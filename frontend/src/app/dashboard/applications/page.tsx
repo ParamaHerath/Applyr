@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { StatusBadge } from "@/components/status-badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -20,21 +20,6 @@ interface JobApplication {
   jobLink: string;
   status: string;
   appliedDate: string;
-}
-
-function getStatusBadge(status: string) {
-  switch (status) {
-    case "INTERVIEWING":
-      return <Badge className="bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 border border-blue-500/20">Interviewing</Badge>;
-    case "APPLIED":
-      return <Badge className="bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border border-orange-500/20">Applied</Badge>;
-    case "OFFER":
-      return <Badge className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border border-emerald-500/20">Offer</Badge>;
-    case "REJECTED":
-      return <Badge className="bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20">Rejected</Badge>;
-    default:
-      return <Badge variant="outline">{status}</Badge>;
-  }
 }
 
 function getTokenFromCookie(): string | null {
@@ -239,7 +224,7 @@ export default function ApplicationsPage() {
                     >
                       <TableCell className="font-medium">{app.companyName}</TableCell>
                       <TableCell>{app.role}</TableCell>
-                      <TableCell>{getStatusBadge(app.status)}</TableCell>
+                      <TableCell><StatusBadge status={app.status} /></TableCell>
                       <TableCell className="text-muted-foreground">{app.appliedDate || "N/A"}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">

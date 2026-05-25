@@ -25,6 +25,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { StatusBadge } from "@/components/status-badge";
 import {
   Card,
   CardContent,
@@ -58,43 +59,33 @@ function getTokenFromCookie(): string | null {
 
 function getStatusConfig(status: string): {
   label: string;
-  badgeClass: string;
   dotClass: string;
 } {
   switch (status) {
     case "INTERVIEWING":
       return {
-        label: "Interviewing",
-        badgeClass:
-          "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 border border-blue-500/20",
+        label: "INTERVIEWING",
         dotClass: "bg-blue-500",
       };
     case "APPLIED":
       return {
-        label: "Applied",
-        badgeClass:
-          "bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border border-orange-500/20",
+        label: "APPLIED",
         dotClass: "bg-orange-500",
       };
     case "OFFER":
       return {
-        label: "Offer",
-        badgeClass:
-          "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border border-emerald-500/20",
+        label: "OFFER",
         dotClass: "bg-emerald-500",
       };
     case "REJECTED":
       return {
-        label: "Rejected",
-        badgeClass:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20",
+        label: "REJECTED",
         dotClass: "bg-destructive",
       };
     default: // DRAFT and unknown
       return {
-        label: status.charAt(0) + status.slice(1).toLowerCase(),
-        badgeClass: "bg-muted text-muted-foreground border border-border",
-        dotClass: "bg-muted-foreground",
+        label: status.toUpperCase(),
+        dotClass: "bg-zinc-400 dark:bg-white",
       };
   }
 }
@@ -321,7 +312,7 @@ export default function ApplicationDetailPage() {
       <div className="flex flex-col gap-1.5">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-3xl font-bold tracking-tight">{app.role}</h1>
-          <Badge className={status.badgeClass}>{status.label}</Badge>
+          <StatusBadge status={app.status} className="h-7 px-3 py-1 flex items-center text-sm" />
         </div>
         <p className="flex items-center gap-2 text-lg text-muted-foreground">
           <Building2 className="h-4 w-4 shrink-0" />
@@ -366,15 +357,6 @@ export default function ApplicationDetailPage() {
 
                 <div className="flex flex-col gap-1">
                   <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Status
-                  </dt>
-                  <dd>
-                    <Badge className={status.badgeClass}>{status.label}</Badge>
-                  </dd>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Date Applied
                   </dt>
                   <dd className="text-sm font-medium">
@@ -382,7 +364,7 @@ export default function ApplicationDetailPage() {
                   </dd>
                 </div>
 
-                <div className="flex flex-col gap-1 sm:col-span-2">
+                <div className="flex flex-col gap-1">
                   <dt className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Job Link
                   </dt>
@@ -407,6 +389,57 @@ export default function ApplicationDetailPage() {
                   </dd>
                 </div>
               </dl>
+            </CardContent>
+          </Card>
+
+          {/* ── Auto-Parse placeholder card ───────────────────────────── */}
+          <Card className="rounded-xl border-dashed border-border/60 bg-muted/10 shadow-sm relative overflow-hidden">
+            {/* Subtle radial glow — purely decorative */}
+            <div className="pointer-events-none absolute inset-0 opacity-[0.04] bg-[radial-gradient(ellipse_at_50%_0%,_var(--primary),_transparent_65%)]" />
+
+            <CardHeader className="pb-4">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <CardTitle className="flex items-center gap-2 text-base font-semibold">
+                    <Wand2 className="h-4 w-4 text-muted-foreground" />
+                    Auto-Parsed Details
+                  </CardTitle>
+                  <CardDescription className="mt-1 text-xs">
+                    Paste a job URL and click &ldquo;Parse&rdquo; — these fields
+                    fill automatically.
+                  </CardDescription>
+                </div>
+                <Badge
+                  variant="outline"
+                  className="shrink-0 text-[10px] tracking-wide uppercase font-semibold rounded-md"
+                >
+                  Coming Soon
+                </Badge>
+              </div>
+            </CardHeader>
+
+            <CardContent>
+              <div className="flex flex-col gap-2.5">
+                {[
+                  "Job Description",
+                  "Required Skills / Tech Stack",
+                  "Salary Range",
+                  "Location",
+                  "Work Type  (Remote · Hybrid · On-site)",
+                ].map((field) => (
+                  <div
+                    key={field}
+                    className="flex items-center gap-3 rounded-lg border border-border/40 bg-background/50 px-4 py-3 select-none"
+                  >
+                    <Lock className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
+                    <span className="text-sm text-muted-foreground/60">
+                      {field}
+                    </span>
+                    {/* Placeholder shimmer bar */}
+                    <div className="ml-auto h-2 w-20 rounded-full bg-muted/50" />
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
 
@@ -474,57 +507,6 @@ export default function ApplicationDetailPage() {
                   )}
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          {/* ── Auto-Parse placeholder card ───────────────────────────── */}
-          <Card className="rounded-xl border-dashed border-border/60 bg-muted/10 shadow-sm relative overflow-hidden">
-            {/* Subtle radial glow — purely decorative */}
-            <div className="pointer-events-none absolute inset-0 opacity-[0.04] bg-[radial-gradient(ellipse_at_50%_0%,_var(--primary),_transparent_65%)]" />
-
-            <CardHeader className="pb-4">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <CardTitle className="flex items-center gap-2 text-base font-semibold">
-                    <Wand2 className="h-4 w-4 text-muted-foreground" />
-                    Auto-Parsed Details
-                  </CardTitle>
-                  <CardDescription className="mt-1 text-xs">
-                    Paste a job URL and click &ldquo;Parse&rdquo; — these fields
-                    fill automatically.
-                  </CardDescription>
-                </div>
-                <Badge
-                  variant="outline"
-                  className="shrink-0 text-[10px] tracking-wide"
-                >
-                  Coming Soon
-                </Badge>
-              </div>
-            </CardHeader>
-
-            <CardContent>
-              <div className="flex flex-col gap-2.5">
-                {[
-                  "Job Description",
-                  "Required Skills / Tech Stack",
-                  "Salary Range",
-                  "Location",
-                  "Work Type  (Remote · Hybrid · On-site)",
-                ].map((field) => (
-                  <div
-                    key={field}
-                    className="flex items-center gap-3 rounded-lg border border-border/40 bg-background/50 px-4 py-3 select-none"
-                  >
-                    <Lock className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
-                    <span className="text-sm text-muted-foreground/60">
-                      {field}
-                    </span>
-                    {/* Placeholder shimmer bar */}
-                    <div className="ml-auto h-2 w-20 rounded-full bg-muted/50" />
-                  </div>
-                ))}
-              </div>
             </CardContent>
           </Card>
         </div>

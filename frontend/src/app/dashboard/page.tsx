@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Briefcase, Send, CheckCircle, XCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/status-badge";
 import { useAuth } from "@/context/auth-context";
 
 interface JobApplication {
@@ -15,21 +15,6 @@ interface JobApplication {
   jobLink: string;
   status: string;
   appliedDate: string;
-}
-
-function getStatusBadge(status: string) {
-  switch (status) {
-    case "INTERVIEWING":
-      return <Badge className="bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 border border-blue-500/20">Interviewing</Badge>;
-    case "APPLIED":
-      return <Badge className="bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border border-orange-500/20">Applied</Badge>;
-    case "OFFER":
-      return <Badge className="bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border border-emerald-500/20">Offer</Badge>;
-    case "REJECTED":
-      return <Badge className="bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/20">Rejected</Badge>;
-    default:
-      return <Badge variant="outline">{status}</Badge>;
-  }
 }
 
 function getTokenFromCookie(): string | null {
@@ -140,12 +125,13 @@ export default function DashboardHome() {
                     <TableHead className="w-[200px]">Company</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Applied Date</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {recentApplications.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={3} className="h-24 text-center text-muted-foreground">
+                      <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
                         No applications found. Go add some!
                       </TableCell>
                     </TableRow>
@@ -154,7 +140,8 @@ export default function DashboardHome() {
                       <TableRow key={app.id}>
                         <TableCell className="font-medium">{app.companyName}</TableCell>
                         <TableCell>{app.role}</TableCell>
-                        <TableCell>{getStatusBadge(app.status)}</TableCell>
+                        <TableCell><StatusBadge status={app.status} /></TableCell>
+                        <TableCell className="text-muted-foreground">{app.appliedDate || "N/A"}</TableCell>
                       </TableRow>
                     ))
                   )}
