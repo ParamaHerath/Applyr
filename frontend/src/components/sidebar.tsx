@@ -9,6 +9,9 @@ import {
   Settings,
   LogOut,
   ChevronRight,
+  FileText,
+  ChartLine,
+  MessagesSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/auth-context";
@@ -16,6 +19,9 @@ import { useAuth } from "@/context/auth-context";
 const sidebarLinks = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Applications", href: "/dashboard/applications", icon: ListTodo },
+  { name: "Resume", href: "/dashboard/resume", icon: FileText },
+  { name: "Analytics", href: "/dashboard/analytics", icon: ChartLine },
+  { name: "Interview Prep", href: "/dashboard/interview-prep", icon: MessagesSquare },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
@@ -44,12 +50,12 @@ export function Sidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col border-r border-border bg-background sm:flex">
       {/* Logo */}
-      <div className="flex h-16 items-center px-6 border-b border-border/40">
+      <div className="flex items-center p-6 border-b border-border/60">
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 font-bold tracking-tight text-xl"
+          className="flex items-center gap-2 font-bold tracking-tight text-2xl"
         >
-          <Briefcase className="h-6 w-6 text-primary" />
+          <Briefcase className="h-8 w-8 text-primary" />
           <span>Applyr</span>
         </Link>
       </div>
