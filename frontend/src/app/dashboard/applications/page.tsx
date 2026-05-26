@@ -15,20 +15,34 @@ interface JobApplication {
   publicId: string;
   companyName: string;
   role: string;
-  jobLink: string;
+  jobLink: string | null;
   status: string;
-  appliedDate: string;
+  appliedDate: string | null;
   jobDescription: string | null;
   salaryRange: string | null;
   location: string | null;
   workType: string | null;
   techStacks: string | null;
+  createdAt: string;
 }
 
 function getTokenFromCookie(): string | null {
   if (typeof document === "undefined") return null;
   const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
   return match ? decodeURIComponent(match[1]) : null;
+}
+
+function formatDate(dateStr: string | null | undefined): string {
+  if (!dateStr) return "—";
+  try {
+    return new Date(dateStr).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return String(dateStr);
+  }
 }
 
 export default function ApplicationsPage() {
@@ -128,6 +142,7 @@ export default function ApplicationsPage() {
                 <TableRow className="bg-muted/50 hover:bg-muted/50">
                   <TableHead className="w-[200px]">Company</TableHead>
                   <TableHead>Role</TableHead>
+                  <TableHead>Date Added</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Date Applied</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -136,7 +151,7 @@ export default function ApplicationsPage() {
               <TableBody>
                 {filteredApps.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                    <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                       No applications found.
                     </TableCell>
                   </TableRow>
@@ -149,11 +164,14 @@ export default function ApplicationsPage() {
                     >
                       <TableCell className="font-medium">{app.companyName}</TableCell>
                       <TableCell>{app.role}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {formatDate(app.createdAt)}
+                      </TableCell>
                       <TableCell>
                         <StatusBadge status={app.status} />
                       </TableCell>
                       <TableCell className="text-muted-foreground">
-                        {app.appliedDate || "—"}
+                        {app.status === "DRAFT" ? "—" : formatDate(app.appliedDate)}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
