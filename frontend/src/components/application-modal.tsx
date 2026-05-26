@@ -77,6 +77,7 @@ export function ApplicationModal({
 
   // ── Wizard State ────────────────────────────────────────────────────────────
   const [step, setStep] = useState<1 | 2>(1);
+  const [didParse, setDidParse] = useState(false);
 
   // ── Form state ──────────────────────────────────────────────────────────────
   const [jobLink, setJobLink] = useState("");
@@ -96,6 +97,7 @@ export function ApplicationModal({
   // Populate / reset fields whenever the modal opens or initial data changes
   useEffect(() => {
     if (open) {
+      setDidParse(false);
       if (initialData) {
         setJobLink(initialData.jobLink ?? "");
         setCompanyName(initialData.companyName);
@@ -132,6 +134,7 @@ export function ApplicationModal({
     // Simulate parsing delay for UI
     setTimeout(() => {
       setIsParsing(false);
+      setDidParse(true);
       
       // Smart dummy parser based on URL domain
       let guessedCompany = "";
@@ -222,14 +225,18 @@ export function ApplicationModal({
               ? "Edit Application"
               : step === 1
               ? "Add New Application"
-              : "Verify Job Details"}
+              : didParse
+              ? "Verify Job Details"
+              : "Enter Job Details"}
           </DialogTitle>
           <DialogDescription>
             {isEditMode
               ? "Update the details for this job application."
               : step === 1
               ? "Automatically pre-fill details from a job posting link, or enter them manually."
-              : "Review and refine the job details before saving."}
+              : didParse
+              ? "Review and refine the job details before saving."
+              : "Manually fill in the details of the job application."}
           </DialogDescription>
         </DialogHeader>
 
@@ -282,7 +289,10 @@ export function ApplicationModal({
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setStep(2)}
+                  onClick={() => {
+                    setDidParse(false);
+                    setStep(2);
+                  }}
                   disabled={isParsing}
                   className="w-full sm:w-auto"
                 >
@@ -369,7 +379,7 @@ export function ApplicationModal({
                   value={workType || ""}
                   onValueChange={(v) => setWorkType(v || "")}
                 >
-                  <SelectTrigger id="modal-work-type">
+                  <SelectTrigger id="modal-work-type" className="w-full">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -389,7 +399,7 @@ export function ApplicationModal({
                     if (next === "DRAFT") setAppliedDate("");
                   }}
                 >
-                  <SelectTrigger id="modal-status">
+                  <SelectTrigger id="modal-status" className="w-full">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
