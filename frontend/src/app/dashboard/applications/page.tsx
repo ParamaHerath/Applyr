@@ -18,6 +18,11 @@ interface JobApplication {
   jobLink: string;
   status: string;
   appliedDate: string;
+  jobDescription: string | null;
+  salaryRange: string | null;
+  location: string | null;
+  workType: string | null;
+  techStacks: string | null;
 }
 
 function getTokenFromCookie(): string | null {

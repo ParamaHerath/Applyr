@@ -50,6 +50,11 @@ interface JobApplication {
   status: string;
   appliedDate: string | null;
   notes: string | null;
+  jobDescription: string | null;
+  salaryRange: string | null;
+  location: string | null;
+  workType: string | null;
+  techStacks: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -326,6 +331,11 @@ export default function ApplicationDetailPage() {
           appliedDate: app.appliedDate,
           jobLink: app.jobLink,
           notes: app.notes,
+          jobDescription: app.jobDescription,
+          salaryRange: app.salaryRange,
+          location: app.location,
+          workType: app.workType,
+          techStacks: app.techStacks,
         }}
         onSaved={(updated) => setApp(updated)}
       />
