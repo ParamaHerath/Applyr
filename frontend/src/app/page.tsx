@@ -39,6 +39,27 @@ const features = [
   }
 ];
 
+const testimonials = [
+  {
+    name: "Sarah Jenkins",
+    role: "Software Engineer",
+    content: "Applyr completely transformed my job hunt. The Kanban board helped me keep track of 50+ applications effortlessly.",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d"
+  },
+  {
+    name: "David Chen",
+    role: "Product Manager",
+    content: "The 1-click URL parsing is magic. It saved me hours of copying and pasting job descriptions. Highly recommend!",
+    avatar: "https://i.pravatar.cc/150?u=a04258a2462d826712d"
+  },
+  {
+    name: "Emily Rodriguez",
+    role: "UX Designer",
+    content: "The AI tailoring feature gave me the exact keywords I was missing to get past the ATS. I got 3 interviews in a week.",
+    avatar: "https://i.pravatar.cc/150?u=a048581f4e29026701d"
+  }
+];
+
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -138,6 +159,53 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        <section className="container mx-auto max-w-screen-xl px-4 py-24 border-t border-border/50">
+          <div className="text-center mb-16">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-3xl font-bold mb-4"
+            >
+              Loved by job seekers everywhere
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-muted-foreground max-w-2xl mx-auto"
+            >
+              See how Applyr is helping professionals land their dream roles.
+            </motion.p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="p-8 rounded-2xl border border-border/50 bg-card/40 backdrop-blur-sm flex flex-col justify-between hover:bg-card/60 transition-colors duration-300 shadow-sm"
+              >
+                <div className="mb-8">
+                  <p className="text-muted-foreground italic leading-relaxed">"{testimonial.content}"</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={testimonial.avatar} alt={testimonial.name} className="w-12 h-12 rounded-full border-2 border-primary/20 object-cover" />
+                  <div>
+                    <h4 className="font-semibold text-foreground">{testimonial.name}</h4>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
       </main>
 
       <footer className="w-full border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-16 mt-auto">
@@ -183,7 +251,7 @@ export default function Home() {
         </div>
         
         <div className="container mx-auto max-w-screen-xl px-4 mt-16 pt-8 border-t border-border/40 text-center md:text-left text-sm text-muted-foreground flex flex-col md:flex-row justify-between items-center">
-          <p>&copy; {new Date().getFullYear()} Applyr. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Applyr - All rights reserved.</p>
         </div>
       </footer>
     </div>
