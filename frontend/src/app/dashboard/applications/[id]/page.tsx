@@ -50,6 +50,11 @@ interface JobApplication {
   status: string;
   appliedDate: string | null;
   notes: string | null;
+  jobDescription: string | null;
+  salaryRange: string | null;
+  location: string | null;
+  workType: string | null;
+  techStacks: string | null;
   createdAt: string;
   updatedAt: string;
 }

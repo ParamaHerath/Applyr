@@ -39,6 +39,18 @@ public class JobApplication {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
+    @Column(columnDefinition = "TEXT")
+    private String jobDescription;
+
+    private String salaryRange;
+
+    private String location;
+
+    private String workType;
+
+    @Column(columnDefinition = "TEXT")
+    private String techStacks;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -99,6 +111,21 @@ public class JobApplication {
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+    public String getJobDescription() { return jobDescription; }
+    public void setJobDescription(String jobDescription) { this.jobDescription = jobDescription; }
+
+    public String getSalaryRange() { return salaryRange; }
+    public void setSalaryRange(String salaryRange) { this.salaryRange = salaryRange; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public String getWorkType() { return workType; }
+    public void setWorkType(String workType) { this.workType = workType; }
+
+    public String getTechStacks() { return techStacks; }
+    public void setTechStacks(String techStacks) { this.techStacks = techStacks; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

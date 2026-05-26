@@ -90,6 +90,11 @@ public class JobApplicationController {
                         application.setAppliedDate(applicationDetails.getAppliedDate());
                     }
                     application.setNotes(applicationDetails.getNotes());
+                    application.setJobDescription(applicationDetails.getJobDescription());
+                    application.setSalaryRange(applicationDetails.getSalaryRange());
+                    application.setLocation(applicationDetails.getLocation());
+                    application.setWorkType(applicationDetails.getWorkType());
+                    application.setTechStacks(applicationDetails.getTechStacks());
                     return ResponseEntity.ok(service.save(application));
                 }).orElse(ResponseEntity.notFound().build());
     }
