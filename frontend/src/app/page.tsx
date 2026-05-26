@@ -139,7 +139,53 @@ export default function Home() {
           </div>
         </section>
       </main>
+
+      <footer className="w-full border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-16 mt-auto">
+        <div className="container mx-auto max-w-screen-xl px-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+          <div className="col-span-2 lg:col-span-2">
+            <div className="flex items-center gap-2 mb-4">
+              <Briefcase className="h-6 w-6 text-primary" />
+              <span className="font-bold tracking-tight text-xl">Applyr</span>
+            </div>
+            <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+              The premium platform to organize your job search, tailor your resumes, and land your dream job faster.
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="font-semibold mb-4">Product</h4>
+            <div className="flex flex-col gap-3 text-sm text-muted-foreground">
+              <Link href="#" className="hover:text-primary transition-colors">Features</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Job Tracker</Link>
+              <Link href="#" className="hover:text-primary transition-colors">AI Tailoring</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Pricing</Link>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4">Resources</h4>
+            <div className="flex flex-col gap-3 text-sm text-muted-foreground">
+              <Link href="#" className="hover:text-primary transition-colors">Blog</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Help Center</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Interview Guides</Link>
+              <Link href="#" className="hover:text-primary transition-colors">API Docs</Link>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4">Legal</h4>
+            <div className="flex flex-col gap-3 text-sm text-muted-foreground">
+              <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Cookie Policy</Link>
+            </div>
+          </div>
+        </div>
+        
+        <div className="container mx-auto max-w-screen-xl px-4 mt-16 pt-8 border-t border-border/40 text-center md:text-left text-sm text-muted-foreground flex flex-col md:flex-row justify-between items-center">
+          <p>&copy; {new Date().getFullYear()} Applyr. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 }
-
