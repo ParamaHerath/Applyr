@@ -65,6 +65,23 @@ function getTokenFromCookie(): string | null {
   return match ? decodeURIComponent(match[1]) : null;
 }
 
+function getStatusLabel(status: string): string {
+  switch (status) {
+    case "DRAFT":
+      return "Draft";
+    case "APPLIED":
+      return "Applied";
+    case "INTERVIEWING":
+      return "Interviewing";
+    case "OFFER":
+      return "Offer";
+    case "REJECTED":
+      return "Rejected";
+    default:
+      return status;
+  }
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function ApplicationModal({
@@ -380,7 +397,9 @@ export function ApplicationModal({
                   onValueChange={(v) => setWorkType(v || "")}
                 >
                   <SelectTrigger id="modal-work-type" className="w-full">
-                    <SelectValue placeholder="Select type" />
+                    <span className="flex flex-1 text-left text-sm">
+                      {workType || "Select type"}
+                    </span>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Remote">Remote</SelectItem>
@@ -400,7 +419,9 @@ export function ApplicationModal({
                   }}
                 >
                   <SelectTrigger id="modal-status" className="w-full">
-                    <SelectValue placeholder="Select status" />
+                    <span className="flex flex-1 text-left text-sm">
+                      {getStatusLabel(status)}
+                    </span>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="DRAFT">Draft</SelectItem>
