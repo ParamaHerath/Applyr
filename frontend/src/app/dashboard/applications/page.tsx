@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Trash2, ChevronRight } from "lucide-react";
+import { Plus, Trash2, ChevronRight, ExternalLink, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/status-badge";
 import { ApplicationModal } from "@/components/application-modal";
@@ -18,6 +18,7 @@ interface JobApplication {
   jobLink: string | null;
   status: string;
   appliedDate: string | null;
+  notes: string | null;
   jobDescription: string | null;
   salaryRange: string | null;
   location: string | null;
@@ -50,6 +51,7 @@ export default function ApplicationsPage() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingApp, setEditingApp] = useState<JobApplication | undefined>(undefined);
 
   const fetchApplications = async () => {
     const token = getTokenFromCookie();
@@ -111,10 +113,27 @@ export default function ApplicationsPage() {
         </Button>
       </div>
 
-      {/* ── Add Application Modal ─────────────────────────────────────────── */}
+      {/* ── Add/Edit Application Modal ─────────────────────────────────────── */}
       <ApplicationModal
         open={isModalOpen}
-        onOpenChange={setIsModalOpen}
+        onOpenChange={(open) => {
+          setIsModalOpen(open);
+          if (!open) setEditingApp(undefined);
+        }}
+        initialData={editingApp ? {
+          publicId: editingApp.publicId,
+          companyName: editingApp.companyName,
+          role: editingApp.role,
+          status: editingApp.status,
+          appliedDate: editingApp.appliedDate,
+          jobLink: editingApp.jobLink,
+          notes: editingApp.notes,
+          jobDescription: editingApp.jobDescription,
+          salaryRange: editingApp.salaryRange,
+          location: editingApp.location,
+          workType: editingApp.workType,
+          techStacks: editingApp.techStacks,
+        } : undefined}
         onSaved={() => fetchApplications()}
       />
 
@@ -145,7 +164,7 @@ export default function ApplicationsPage() {
                   <TableHead>Date Added</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Date Applied</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-right"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -159,7 +178,7 @@ export default function ApplicationsPage() {
                   filteredApps.map((app) => (
                     <TableRow
                       key={app.id}
-                      className="cursor-pointer"
+                      className="group cursor-pointer"
                       onClick={() => router.push(`/dashboard/applications/${app.publicId}`)}
                     >
                       <TableCell className="font-medium">{app.companyName}</TableCell>
@@ -175,16 +194,47 @@ export default function ApplicationsPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(app.id);
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {app.jobLink && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open(app.jobLink!, "_blank");
+                                }}
+                                title="Open job link"
+                                className="text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingApp(app);
+                                setIsModalOpen(true);
+                              }}
+                              title="Edit application"
+                              className="text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 hover:text-amber-700 dark:hover:text-amber-300 cursor-pointer"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(app.id);
+                              }}
+                              title="Delete application"
+                              className="text-destructive hover:bg-destructive/10 hover:text-destructive-foreground cursor-pointer"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                           <ChevronRight className="h-4 w-4 text-muted-foreground/40 shrink-0" />
                         </div>
                       </TableCell>
