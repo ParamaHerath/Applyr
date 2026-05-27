@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Applyr</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-row">
+        <img src="../icons/icon48.png" alt="Applyr" class="logo-icon" />
+        <h1 class="logo-text">Applyr</h1>
+      </div>
+      <p class="subtitle">Extract job details from this page</p>
+    </header>
+
+    <!-- Status area (shows while parsing / on error) -->
+    <div id="status" class="status hidden">
+      <div id="status-icon" class="status-icon"></div>
+      <p id="status-text" class="status-text"></p>
+    </div>
+
+    <!-- Parsed results preview -->
+    <div id="results" class="results hidden">
+      <div class="result-card">
+        <div class="result-header">
+          <span id="result-company" class="result-company"></span>
+          <span id="result-source" class="result-badge"></span>
+        </div>
+        <h2 id="result-title" class="result-title"></h2>
+        <div class="result-meta">
+          <span id="result-location" class="meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span id="result-location-text"></span>
+          </span>
+          <span id="result-work-type" class="meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            <span id="result-work-type-text"></span>
+          </span>
+          <span id="result-salary" class="meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+            <span id="result-salary-text"></span>
+          </span>
+        </div>
+        <div id="result-techs-wrapper" class="result-techs-wrapper">
+          <div id="result-techs" class="result-techs"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button id="btn-parse" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 4-8 8 8 8"/></svg>
+        <span id="btn-parse-text">Parse This Page</span>
+        <div id="btn-spinner" class="spinner hidden"></div>
+      </button>
+      <button id="btn-send" class="btn btn-accent hidden" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        Send to Applyr
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <a href="http://localhost:3000/dashboard/applications" target="_blank" rel="noopener noreferrer">Open Dashboard</a>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
