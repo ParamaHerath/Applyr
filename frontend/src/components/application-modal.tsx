@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, Wand2, Link as LinkIcon, ArrowLeft, AlertCircle } from "lucide-react";
+import { Loader2, Wand2, Link as LinkIcon, ArrowLeft, AlertCircle, Puzzle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,6 +55,8 @@ interface ApplicationModalProps {
   };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSaved?: (saved: any) => void;
+  /** Pre-parsed data from the Chrome extension handoff. */
+  extensionData?: Record<string, string>;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -89,6 +91,7 @@ export function ApplicationModal({
   onOpenChange,
   initialData,
   onSaved,
+  extensionData,
 }: ApplicationModalProps) {
   const isEditMode = Boolean(initialData);
 
@@ -129,6 +132,20 @@ export function ApplicationModal({
         setTechStacks(initialData.techStacks ?? "");
         setJobDescription(initialData.jobDescription ?? "");
         setStep(2); // Edit mode skips Step 1
+      } else if (extensionData) {
+        // Pre-fill from Chrome extension data
+        setJobLink(extensionData.jobUrl ?? "");
+        setCompanyName(extensionData.company ?? "");
+        setRole(extensionData.title ?? "");
+        setLocation(extensionData.location ?? "");
+        setSalaryRange(extensionData.salary ?? "");
+        setWorkType(extensionData.workType ?? "");
+        setTechStacks(extensionData.techStacks ?? "");
+        setJobDescription(extensionData.description ?? "");
+        setStatus("DRAFT");
+        setAppliedDate("");
+        setDidParse(true);
+        setStep(2); // Skip Step 1, go straight to review
       } else {
         setJobLink("");
         setCompanyName("");
@@ -143,7 +160,7 @@ export function ApplicationModal({
         setStep(1); // Add mode starts at Step 1
       }
     }
-  }, [open, initialData]);
+  }, [open, initialData, extensionData]);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
 
@@ -284,6 +301,28 @@ export function ApplicationModal({
         {step === 1 ? (
           /* ── STEP 1: Link & Parse ── */
           <div className="flex flex-col gap-6 py-4">
+            {/* ── Extension Promotion ── */}
+            <div className="flex items-start gap-3 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-4">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10">
+                <Puzzle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                  Use the Applyr Chrome Extension
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Works on LinkedIn, Indeed, Glassdoor &amp; every other job board. Install the extension, visit any job posting, and click to auto-fill.
+                </p>
+              </div>
+            </div>
+
+            {/* ── Divider with "or" ── */}
+            <div className="flex items-center gap-3">
+              <div className="flex-1 border-t border-border/50" />
+              <span className="text-xs text-muted-foreground font-medium">or paste a link</span>
+              <div className="flex-1 border-t border-border/50" />
+            </div>
+
             <div className="flex flex-col gap-3 rounded-lg border border-primary/20 bg-primary/5 p-5 relative overflow-hidden">
               <div className="pointer-events-none absolute inset-0 opacity-[0.03] bg-[radial-gradient(ellipse_at_50%_0%,_var(--primary),_transparent_70%)]" />
               <Label htmlFor="modal-link" className="font-semibold text-primary">
@@ -310,7 +349,7 @@ export function ApplicationModal({
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                Paste the URL of a job posting (e.g. LinkedIn, Indeed, Glassdoor) to extract all info in seconds.
+                Works best with Greenhouse, Lever, Workable &amp; other ATS platforms. For LinkedIn or Indeed, use the Chrome Extension above.
               </p>
               {parseError && (
                 <div className="flex items-start gap-2 rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">

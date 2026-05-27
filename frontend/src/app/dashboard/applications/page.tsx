@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -96,7 +96,11 @@ export default function ApplicationsPage() {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [sortBy, setSortBy] = useState("ADDED_DESC");
 
-  const fetchApplications = async () => {
+  // ── Extension handoff: detect ?action=new-parsed&data=... ──────────────
+  const searchParams = useSearchParams();
+  const [extensionData, setExtensionData] = useState<Record<string, string> | undefined>(undefined);
+
+  const fetchApplications = useCallback(async () => {
     const token = getTokenFromCookie();
     if (!token) return router.push("/login");
 
@@ -112,13 +116,33 @@ export default function ApplicationsPage() {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [router]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchApplications();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchApplications]);
+
+  // Detect extension handoff on mount
+  useEffect(() => {
+    const action = searchParams.get("action");
+    const dataParam = searchParams.get("data");
+
+    if (action === "new-parsed" && dataParam) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(dataParam));
+        setExtensionData(parsed);
+        setIsModalOpen(true);
+
+        // Clean the URL to prevent re-triggering on refresh
+        const url = new URL(window.location.href);
+        url.searchParams.delete("action");
+        url.searchParams.delete("data");
+        window.history.replaceState({}, "", url.pathname);
+      } catch (err) {
+        console.error("Failed to parse extension data:", err);
+      }
+    }
+  }, [searchParams]);
 
   const handleDelete = async (id: number) => {
     const token = getTokenFromCookie();
@@ -203,6 +227,7 @@ export default function ApplicationsPage() {
           techStacks: editingApp.techStacks,
         } : undefined}
         onSaved={() => fetchApplications()}
+        extensionData={extensionData}
       />
 
       <Card className="rounded-xl border-border/50 bg-card/50 backdrop-blur-sm shadow-sm">
