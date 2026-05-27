@@ -3,21 +3,74 @@
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BarChart2, Briefcase, Sparkles } from "lucide-react";
+import { ArrowRight, BarChart2, Briefcase, Sparkles, Link as LinkIcon, FileText, MessageSquare, LayoutTemplate } from "lucide-react";
 import Link from "next/link";
 
+const features = [
+  {
+    icon: LayoutTemplate,
+    title: "Intelligent Job Tracker",
+    description: "Keep your job search organized with our dynamic Kanban board. Move applications seamlessly from Draft to Offer, and store interview notes in a detailed view."
+  },
+  {
+    icon: LinkIcon,
+    title: "1-Click URL Parsing",
+    description: "Simply paste a job link and we'll instantly extract the role, company name, and key skills required—no tedious manual entry needed."
+  },
+  {
+    icon: FileText,
+    title: "AI Resume Tailoring",
+    description: "Align your resume with the job description using our interactive workspace. Instantly get match scores, missing keyword suggestions, and tailored bullet points."
+  },
+  {
+    icon: MessageSquare,
+    title: "Smart Interview Prep",
+    description: "Walk into your next interview with confidence. Generate customized technical questions based on the job role, and practice with AI guidance."
+  },
+  {
+    icon: BarChart2,
+    title: "Advanced Analytics",
+    description: "Visualize your success funnel. Track your application velocity and identify bottlenecks in your process with beautiful, actionable charts."
+  },
+  {
+    icon: Briefcase,
+    title: "Resume Management",
+    description: "Store and manage your base resumes securely. Seamlessly switch between LaTeX and standard PDF/Text formats when tailoring your applications."
+  }
+];
+
+const testimonials = [
+  {
+    name: "Sarah Jenkins",
+    role: "Software Engineer",
+    content: "Applyr completely transformed my job hunt. The Kanban board helped me keep track of 50+ applications effortlessly.",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d"
+  },
+  {
+    name: "David Chen",
+    role: "Product Manager",
+    content: "The 1-click URL parsing is magic. It saved me hours of copying and pasting job descriptions. Highly recommend!",
+    avatar: "https://i.pravatar.cc/150?u=a04258a2462d826712d"
+  },
+  {
+    name: "Emily Rodriguez",
+    role: "UX Designer",
+    content: "The AI tailoring feature gave me the exact keywords I was missing to get past the ATS. I got 3 interviews in a week.",
+    avatar: "https://i.pravatar.cc/150?u=a048581f4e29026701d"
+  }
+];
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-1 flex flex-col items-center justify-center relative overflow-hidden">
+      <main className="flex-1 flex flex-col relative overflow-hidden">
         {/* Background Gradients */}
         <div className="absolute inset-0 w-full h-full bg-background overflow-hidden -z-10">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
         </div>
 
-        <section className="w-full max-w-screen-xl px-4 py-24 sm:py-32 flex flex-col items-center text-center">
+        <section className="container mx-auto max-w-screen-xl px-4 flex flex-col items-center justify-center text-center min-h-[calc(100dvh-4rem)] py-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -46,54 +99,161 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg sm:text-xl text-muted-foreground max-w-2xl mb-10"
           >
-            Applyr is the premium platform to organize your job search. Track applications, log interviews, and monitor your progress all in one sleek dashboard.
+            Applyr is the premium platform to organize your job search. Track applications, instantly parse job listings, tailor your resume, and prepare for interviews all in one seamless workspace.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-4"
+            className="flex flex-col sm:flex-row gap-4 justify-center w-full"
           >
             <Link href="/register" className="w-full sm:w-auto">
-              <Button size="lg" className="rounded-md w-full whitespace-nowrap">
+              <Button size="lg" className="rounded-md w-full sm:w-auto whitespace-nowrap px-8">
                 Start Tracking Free
                 <ArrowRight className="ml-2 h-4 w-4 shrink-0" />
-              </Button>
-            </Link>
-            <Link href="/dashboard" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="rounded-md w-full whitespace-nowrap">
-                View Demo Dashboard
               </Button>
             </Link>
           </motion.div>
         </section>
 
-        <section className="w-full max-w-screen-xl px-4 py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="grid md:grid-cols-2 gap-8"
-          >
-            <div className="p-8 rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm flex flex-col items-start text-left">
-              <div className="p-3 bg-primary/10 rounded-lg mb-4">
-                <Briefcase className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-2xl font-semibold mb-2">Centralized Tracking</h3>
-              <p className="text-muted-foreground">Keep all your job applications in one place. No more messy spreadsheets. Just clean, organized data.</p>
-            </div>
-            <div className="p-8 rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm flex flex-col items-start text-left">
-              <div className="p-3 bg-primary/10 rounded-lg mb-4">
-                <BarChart2 className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-2xl font-semibold mb-2">Insightful Analytics</h3>
-              <p className="text-muted-foreground">Visualize your success rate. See how many applications lead to interviews and offers at a glance.</p>
-            </div>
-          </motion.div>
+        <section className="container mx-auto max-w-screen-xl px-4 py-24 border-t border-border/50">
+          <div className="text-center mb-16">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-3xl font-bold mb-4"
+            >
+              Everything you need to land your dream job
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-muted-foreground max-w-2xl mx-auto"
+            >
+              A complete suite of tools designed to streamline every step of your application journey.
+            </motion.p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+            {features.map((feature, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="p-8 rounded-2xl border border-border/50 bg-card/40 backdrop-blur-sm flex flex-col text-left hover:bg-card/60 transition-colors duration-300 shadow-sm"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-3 bg-primary/10 rounded-xl ring-1 ring-primary/20 shrink-0">
+                    <feature.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold">{feature.title}</h3>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        <section className="container mx-auto max-w-screen-xl px-4 py-24 border-t border-border/50">
+          <div className="text-center mb-16">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-3xl font-bold mb-4"
+            >
+              Loved by job seekers everywhere
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-muted-foreground max-w-2xl mx-auto"
+            >
+              See how Applyr is helping professionals land their dream roles.
+            </motion.p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="p-8 rounded-2xl border border-border/50 bg-card/40 backdrop-blur-sm flex flex-col justify-between hover:bg-card/60 transition-colors duration-300 shadow-sm"
+              >
+                <div className="mb-8">
+                  <p className="text-muted-foreground italic leading-relaxed">"{testimonial.content}"</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={testimonial.avatar} alt={testimonial.name} className="w-12 h-12 rounded-full border-2 border-primary/20 object-cover" />
+                  <div>
+                    <h4 className="font-semibold text-foreground">{testimonial.name}</h4>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </section>
       </main>
+
+      <footer className="w-full border-t border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-16 mt-auto">
+        <div className="container mx-auto max-w-screen-xl px-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+          <div className="col-span-2 lg:col-span-2">
+            <div className="flex items-center gap-2 mb-4">
+              <Briefcase className="h-6 w-6 text-primary" />
+              <span className="font-bold tracking-tight text-xl">Applyr</span>
+            </div>
+            <p className="text-sm text-muted-foreground max-w-xs leading-relaxed">
+              The premium platform to organize your job search, tailor your resumes, and land your dream job faster.
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="font-semibold mb-4">Product</h4>
+            <div className="flex flex-col gap-3 text-sm text-muted-foreground">
+              <Link href="#" className="hover:text-primary transition-colors">Features</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Job Tracker</Link>
+              <Link href="#" className="hover:text-primary transition-colors">AI Tailoring</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Pricing</Link>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4">Resources</h4>
+            <div className="flex flex-col gap-3 text-sm text-muted-foreground">
+              <Link href="#" className="hover:text-primary transition-colors">Blog</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Help Center</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Interview Guides</Link>
+              <Link href="#" className="hover:text-primary transition-colors">API Docs</Link>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4">Legal</h4>
+            <div className="flex flex-col gap-3 text-sm text-muted-foreground">
+              <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Cookie Policy</Link>
+            </div>
+          </div>
+        </div>
+        
+        <div className="container mx-auto max-w-screen-xl px-4 mt-16 pt-8 border-t border-border/40 text-center md:text-left text-sm text-muted-foreground flex flex-col md:flex-row justify-between items-center">
+          <p>&copy; {new Date().getFullYear()} Applyr - All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 }
