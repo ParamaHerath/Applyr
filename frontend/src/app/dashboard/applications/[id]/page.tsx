@@ -383,8 +383,8 @@ export default function ApplicationDetailPage() {
                   <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     <CodeXml className="h-3 w-3" /> Tech Stacks
                   </dt>
-                  <dd className="text-sm">
-                    <div className="mt-1.5 h-2 w-20 rounded-full bg-muted/60 animate-pulse" />
+                  <dd className="text-sm mt-0.5 font-medium">
+                    {app.techStacks || <span className="text-muted-foreground italic font-normal">Not specified</span>}
                   </dd>
                 </div>
 
@@ -392,8 +392,8 @@ export default function ApplicationDetailPage() {
                   <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     <CircleDollarSign className="h-3 w-3" /> Salary Range
                   </dt>
-                  <dd className="text-sm">
-                    <div className="mt-1.5 h-2 w-16 rounded-full bg-muted/60 animate-pulse" />
+                  <dd className="text-sm mt-0.5 font-medium">
+                    {app.salaryRange || <span className="text-muted-foreground italic font-normal">Not specified</span>}
                   </dd>
                 </div>
 
@@ -401,8 +401,8 @@ export default function ApplicationDetailPage() {
                   <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     <MapPin className="h-3 w-3" /> Location
                   </dt>
-                  <dd className="text-sm">
-                    <div className="mt-1.5 h-2 w-24 rounded-full bg-muted/60 animate-pulse" />
+                  <dd className="text-sm mt-0.5 font-medium">
+                    {app.location || <span className="text-muted-foreground italic font-normal">Not specified</span>}
                   </dd>
                 </div>
 
@@ -410,8 +410,8 @@ export default function ApplicationDetailPage() {
                   <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     <Lock className="h-3 w-3" /> Work Type
                   </dt>
-                  <dd className="text-sm">
-                    <div className="mt-1.5 h-2 w-16 rounded-full bg-muted/60 animate-pulse" />
+                  <dd className="text-sm mt-0.5 font-medium">
+                    {app.workType || <span className="text-muted-foreground italic font-normal">Not specified</span>}
                   </dd>
                 </div>
 
@@ -457,23 +457,21 @@ export default function ApplicationDetailPage() {
                     The full job description automatically parsed from the job link.
                   </CardDescription>
                 </div>
-                <Badge
-                  variant="outline"
-                  className="shrink-0 text-[10px] tracking-wide uppercase font-semibold rounded-md"
-                >
-                  Coming Soon
-                </Badge>
               </div>
             </CardHeader>
 
             <CardContent>
-              <div className="flex flex-col gap-3 pb-2">
-                <div className="h-3 w-full rounded-full bg-muted/60 animate-pulse" />
-                <div className="h-3 w-11/12 rounded-full bg-muted/60 animate-pulse" />
-                <div className="h-3 w-4/5 rounded-full bg-muted/60 animate-pulse" />
-                <div className="h-3 w-full rounded-full bg-muted/60 animate-pulse" />
-                <div className="h-3 w-3/4 rounded-full bg-muted/60 animate-pulse" />
-              </div>
+              {app.jobDescription ? (
+                <div className="text-sm whitespace-pre-wrap text-muted-foreground max-h-[400px] overflow-y-auto pr-4 pb-2">
+                  {app.jobDescription}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <FileText className="h-8 w-8 text-muted-foreground/50 mb-2" />
+                  <p className="text-sm font-medium text-muted-foreground">No description available</p>
+                  <p className="text-xs text-muted-foreground mt-1">Edit this application to add a job description.</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
