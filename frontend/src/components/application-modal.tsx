@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, Wand2, Link as LinkIcon, ArrowLeft } from "lucide-react";
+import { Loader2, Wand2, Link as LinkIcon, ArrowLeft, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -110,11 +110,13 @@ export function ApplicationModal({
 
   const [isSaving, setIsSaving] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
+  const [parseError, setParseError] = useState<string | null>(null);
 
   // Populate / reset fields whenever the modal opens or initial data changes
   useEffect(() => {
     if (open) {
       setDidParse(false);
+      setParseError(null);
       if (initialData) {
         setJobLink(initialData.jobLink ?? "");
         setCompanyName(initialData.companyName);
@@ -145,37 +147,59 @@ export function ApplicationModal({
 
   // ── Handlers ────────────────────────────────────────────────────────────────
 
-  const handleParse = () => {
+  const handleParse = async () => {
     if (!jobLink) return;
     setIsParsing(true);
-    // Simulate parsing delay for UI
-    setTimeout(() => {
+    setParseError(null);
+
+    const token = getTokenFromCookie();
+    if (!token) {
+      setParseError("You must be logged in to parse job URLs.");
       setIsParsing(false);
-      setDidParse(true);
-      
-      // Smart dummy parser based on URL domain
-      let guessedCompany = "";
-      try {
-        const urlObj = new URL(jobLink);
-        const parts = urlObj.hostname.split(".");
-        const domain = parts.length > 2 ? parts[parts.length - 2] : parts[0];
-        guessedCompany = domain.charAt(0).toUpperCase() + domain.slice(1);
-      } catch {
-        guessedCompany = "Google";
+      return;
+    }
+
+    try {
+      const res = await fetch("http://localhost:8080/api/parser/parse", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ url: jobLink }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        const message =
+          errorData?.message ||
+          "We couldn't parse this URL. Please enter the details manually.";
+        setParseError(message);
+        setIsParsing(false);
+        return;
       }
 
-      setCompanyName(guessedCompany);
-      setRole("Senior Software Engineer");
-      setLocation("San Francisco, CA");
-      setSalaryRange("$140,000 - $180,000");
-      setWorkType("Hybrid");
-      setTechStacks("React, TypeScript, Node.js");
-      setJobDescription(
-        `We are looking for a Senior Software Engineer to join our team at ${guessedCompany}.\n\nRequirements:\n- 5+ years of experience with React and modern web frontends.\n- Experience building scalable web applications and REST APIs.\n- Strong communication and collaboration skills.`
+      const data = await res.json();
+
+      // Map parsed fields to form state
+      if (data.company) setCompanyName(data.company);
+      if (data.title) setRole(data.title);
+      if (data.location) setLocation(data.location);
+      if (data.salary) setSalaryRange(data.salary);
+      if (data.workType) setWorkType(data.workType);
+      if (data.techStacks) setTechStacks(data.techStacks);
+      if (data.description) setJobDescription(data.description);
+
+      setDidParse(true);
+      setStep(2);
+    } catch (err) {
+      console.error("Parse error:", err);
+      setParseError(
+        "Could not connect to the server. Please check that the backend is running."
       );
-      
-      setStep(2); // Go to review step
-    }, 1500);
+    } finally {
+      setIsParsing(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -288,6 +312,12 @@ export function ApplicationModal({
               <p className="text-xs text-muted-foreground">
                 Paste the URL of a job posting (e.g. LinkedIn, Indeed, Glassdoor) to extract all info in seconds.
               </p>
+              {parseError && (
+                <div className="flex items-start gap-2 rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
+                  <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                  <p>{parseError}</p>
+                </div>
+              )}
             </div>
 
             {/* Step 1 Actions */}
