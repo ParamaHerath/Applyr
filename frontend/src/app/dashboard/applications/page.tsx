@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -87,7 +87,7 @@ function getSortByLabel(sort: string): string {
   }
 }
 
-export default function ApplicationsPage() {
+function ApplicationsPageContent() {
   const router = useRouter();
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -376,5 +376,13 @@ export default function ApplicationsPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function ApplicationsPage() {
+  return (
+    <Suspense>
+      <ApplicationsPageContent />
+    </Suspense>
   );
 }
